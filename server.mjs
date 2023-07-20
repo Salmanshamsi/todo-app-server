@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import todo from './routes/users.mjs';
+import todo from './routes/todo.mjs';
 import cors from 'cors';
 
 
@@ -11,9 +11,9 @@ app.use(express.static("public"));
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
-    console.log("Hello world-3");
-    next(); 
+        next(); 
 });
+
 
 app.use("/todo", todo);
 
