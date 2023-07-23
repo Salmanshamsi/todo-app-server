@@ -1,93 +1,65 @@
-import { v4 as uuidv4 } from 'uuid';
+import Todo from "../modals/todo.mjs";
 
-
-const todo = [];
-
-const getData = (req, res) => {
-    const dataToSend = []; // Accumulate data to send in an array
-
-    for (let i = 0; i < todo.length; i++) {
-        dataToSend.push(todo[i]);
+const getData = async (req, res) => {
+    try {
+      const todos = await Todo.find({});
+      res.send(todos); 
+    } catch (error) {
+      console.error("Error getting todos:", error);
+      res.status(500).send("Error getting todos");
     }
+  };
 
-    res.send(dataToSend); // Send the array as a single response
-}
-
-const setData = (req,res) => {
-
+const setData = async (req, res) => {
     const data = req.body.data;
-    console.log(data);
-
-    if(data !== ""){
-        todo.push({data : data, id : uuidv4()});
-        res.send("data added");
-    }else{
-        res.send("data not added");
+  
+    try {
+      if (data !== "") {
+        const newTodo = new Todo({ data });
+  
+        await newTodo.save();
+        res.send("Data added");
+      } else {
+        res.send("Data not added");
+      }
+    } catch (error) {
+      console.error("Error saving todo item:", error);
+      res.status(500).send("Error saving todo item");
     }
+  };
+  
+  
+const deleteData = async (req, res) => {
+  const id = req.params.id;
 
-}
-
-
-
-const deleteData = (req,res) => {
-
-    const id = req.params.id;
-    let isFound = false;
-
-    for(let i = 0; i < todo.length; i++ ){
-        
-        if(id === todo[i].id){
-            deleteElement(todo,todo[i]);
-            isFound = true;
-            break;
-        }
+  try {
+    const result = await Todo.deleteOne({ _id: id });
+    if (result.deletedCount === 1) {
+      res.send("Data deleted successfully");
+    } else {
+      res.send("Data not found");
     }
+  } catch (error) {
+    console.error("Error deleting todo item:", error);
+    res.status(500).send("Error deleting todo item");
+  }
+};
 
-    if(isFound){
-        res.send("Data deleted Sucessfully");
-    }else{
-        res.send("Data not deleted ");
+const updateData = async (req, res) => {
+  const id = req.params.id;
+  const data = req.body.data;
+
+  try {
+    const result = await Todo.updateOne({ _id: id }, { data });
+    if (result.nModified === 1) {
+      res.send("Update successful");
+    } else {
+      res.send("Data not found");
     }
+  } catch (error) {
+    console.error("Error updating todo item:", error);
+    res.status(500).send("Error updating todo item");
+  }
+};
 
-}
-
-
-const deleteElement = (arr,Ele) => {
-
-    
-    const index = arr.findIndex(item => Ele === item);
-    console.log( "index :" + index , "Element :" + Ele)
-
-     if(index !== -1 ){
-            arr.splice(index,1);
-     }
-
-}
-
-
-const updateData = (req,res) => {
-
-    const id = req.params.id;
-    const data = req.body.data;
-    let isUpdate = false;
-
-
-    for(let i = 0; i < todo.length; i++){
-        if(todo[i].id === id){
-            todo[i].data = data;
-            isUpdate = true;
-            break;
-        }
-    }
-
-    if(isUpdate){
-        res.send("update sucessfully");
-    }else{
-        res.send(" not update");
-    }
-
-    
-}
-
-
-export {getData, setData, deleteData,updateData}
+export { getData, setData, deleteData, updateData };

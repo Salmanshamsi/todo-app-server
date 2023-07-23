@@ -1,25 +1,19 @@
 import express from 'express';
-import { getData, setData ,deleteData, updateData} from '../controller/todo.mjs';
-
-const routes = express.Router();
+import { deleteData, getData, setData, updateData } from '../controller/todo.mjs';
 
 
-routes.get("/",(req,res)=>{
-    getData(req,res);
-})
-
-routes.post("/",(req,res)=>{
-    setData(req,res);
-})
-
-routes.delete("/:id",(req,res)=>{
-    deleteData(req,res);
-})
-
-routes.patch("/:id",(req,res)=>{
-    updateData(req,res);
-})
+const router = express.Router();
 
 
+router.get('/', getData);
 
-export default routes;
+
+router.post('/', setData);
+
+
+router.delete('/:id', deleteData);
+
+
+router.put('/:id', updateData);
+
+export default router;
