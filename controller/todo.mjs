@@ -44,20 +44,26 @@ const deleteData = async (req, res) => {
     res.status(500).send("Error deleting todo item");
   }
 };
-
 const updateData = async (req, res) => {
   const id = req.params.id;
-  const data = req.body.data;
+  const upd_data = req.body.data;
+
+  console.log(upd_data + " id : " + id); // Log the update data and id to check if they are received correctly
 
   try {
-    const result = await Todo.updateOne({ _id: id }, { data });
+
+    const result = await Todo.updateOne({ _id: id }, { $set: { data: upd_data } });
+    
+    console.log(upd_data + " id : " + id); 
+    console.log(" res :" + result.nModified)
+
     if (result.nModified === 1) {
       res.send("Update successful");
     } else {
       res.send("Data not found");
     }
   } catch (error) {
-    console.error("Error updating todo item:", error);
+    console.error("Error updating todo item:", error); // Log the error to check what went wrong
     res.status(500).send("Error updating todo item");
   }
 };
