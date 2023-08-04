@@ -3,12 +3,22 @@ import bodyParser from 'body-parser';
 import todo from './routes/todo.mjs';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import { config } from 'dotenv';
 
 
-const URI = "mongodb+srv://shamsisalman81:karachi@cluster0.feclegf.mongodb.net/todo-app?retryWrites=true&w=majority";
+
+const app = express();
+const port = process.env.PORT ||  3000;
+config()
+const uri = process.env.MONGODB_URI;
 
 
-mongoose.connect(URI,{
+app.set('trust proxy', true);
+app.use(cors());
+app.use(express.static("public"));
+app.use(bodyParser.json());
+
+mongoose.connect(uri,{
     useNewUrlParser : true,
 }).then(()=>{
     console.log("connected sucessfully !");
@@ -17,11 +27,6 @@ mongoose.connect(URI,{
 })
 
 
-const app = express();
-const port = 3000;
-app.use(cors());
-app.use(express.static("public"));
-app.use(bodyParser.json());
 
 app.use((req, res, next) => {
         next(); 
