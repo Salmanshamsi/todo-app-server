@@ -44,6 +44,7 @@ const deleteData = async (req, res) => {
     res.status(500).send("Error deleting todo item");
   }
 };
+
 const updateData = async (req, res) => {
   const id = req.params.id;
   const upd_data = req.body.data;
